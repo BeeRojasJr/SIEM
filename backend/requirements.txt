@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+websockets
+watchfiles
+pydantic
+maxminddb
+groq
+python-dotenv

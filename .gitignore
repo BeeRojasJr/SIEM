@@ -1,0 +1,20 @@
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+
+# React / Node.js
+node_modules/
+dist/
+build/
+
+# Local system files
+.DS_Store
+Thumbs.db
