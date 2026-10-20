@@ -12,7 +12,7 @@ from fastapi.responses import StreamingResponse
 from .ai import AIRequest, AnalystAI
 from .geoip import GeoIPService
 from .simulator import simulator_loop, make_event, simulated_geo
-
+import os
 store = MemoryStore()
 engine = DetectionEngine()
 geoip = GeoIPService(placeholder=simulated_geo)
@@ -37,7 +37,9 @@ async def lifespan(app):
     except asyncio.CancelledError: pass
 
 app = FastAPI(title="AEGIS Mini SIEM API", version="0.1.0", lifespan=lifespan)
-app.add_middleware(CORSMiddleware, allow_origins=["http://localhost:5173"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
+origins = [o.strip() for o in os.getenv("CORS_ORIGINS", "http://localhost:5173").split(",") if o.strip()]
+app.add_middleware(CORSMiddleware, allow_origins=origins, allow_credentials=True,
+                      allow_methods=["*"], allow_headers=["*"])
 
 @app.get("/api/health")
 def health(): return {"status":"ok","service":"mini-siem-api"}
