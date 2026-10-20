@@ -7,10 +7,12 @@ import AiCompanion from './AiCompanion';
 import { bumpStreakState, petMood, toAiTarget } from './aiUtils';
 import { SEVS, Sev, Status, geoBadge, geoKey, isSim, placeLabel, pretty, sevColors, tm, typeLabel, usePersisted } from './common';
 
+const API_URL = import.meta.env.VITE_API_URL ?? '/api';
+const WS_URL = import.meta.env.VITE_WS_URL ??
+  `${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/ws`;
+
 const api = async (path, opts = {}) => {
-  const r = await fetch('/api' + path, { headers: { 'Content-Type': 'application/json' }, ...opts });
-  if (!r.ok) throw Error(await r.text());
-  return r.json();
+  const r = await fetch(API_URL + path, { headers: { 'Content-Type': 'application/json' }, ...opts });
 };
 const EMPTY = { severity: [], types: [], status: 'all', host: null, query: '', minute: null };
 const ROW_OPTIONS = [20, 50, 100];
@@ -76,7 +78,7 @@ function App() {
   useEffect(() => {
     let ws, retry, closed = false;
     function connect() {
-      ws = new WebSocket(`${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/ws`);
+      ws = new WebSocket(WS_URL);
       ws.onopen = () => { setConnected(true); refresh(); };
       ws.onclose = () => { setConnected(false); if (!closed) retry = setTimeout(connect, 2500); };
       ws.onerror = () => ws.close();

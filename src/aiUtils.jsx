@@ -1,11 +1,13 @@
 import { Fragment } from 'react';
 import { typeLabel } from './common';
 
+const API_URL = import.meta.env.VITE_API_URL ?? '/api';
+
 // ---------- streaming client (talks only to our own backend; the API key never reaches the browser) ----------
 export async function streamAnalyst(body, { signal, onMeta, onDelta, onDone, onError }) {
   let res;
   try {
-    res = await fetch('/api/ai/stream', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body), signal });
+    res = await fetch(API_URL + '/ai/stream', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body), signal });
   } catch (e) {
     if (e.name !== 'AbortError') onError({ code: 'offline', message: 'Could not reach the AEGIS backend. Is it running on port 8000?', retryable: true });
     return;
